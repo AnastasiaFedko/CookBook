@@ -1,0 +1,381 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Сookbook_EXAM">
+
+    <!--ширина вкладок TabControl-->
+    <local:TabSizeConverter x:Key="tabSizeConverter" />
+
+    <!--стиль TabItem-->
+    <Style TargetType="{x:Type TabItem}">
+        <Setter Property="Width">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource tabSizeConverter}">
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type TabControl}}" />
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type TabControl}}" Path="ActualWidth" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate x:Name="titmp" TargetType="TabItem">
+                    <Border Name="Border" BorderThickness="1,1,1,1" BorderBrush="DarkGray" CornerRadius="5,5,0,0" 
+                                Margin="1,0">
+                        <ContentPresenter x:Name="ContentSite"  VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"  ContentSource="Header" Margin="10,2"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="GhostWhite"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="LightGray"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#FFE2E2E2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--стиль TabControl-->
+    <Style  TargetType="{x:Type TabControl}" >
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <DockPanel KeyboardNavigation.TabNavigation="Local" LastChildFill="True">
+                        <TabPanel DockPanel.Dock="{TemplateBinding TabStripPlacement}" Name="HeaderPanel" Grid.Row="0"
+                                       IsItemsHost="True" KeyboardNavigation.TabIndex="1"
+                                      Background="Transparent" />
+                        <Border Name="Border" Background="Transparent" BorderBrush="LightGray" BorderThickness="1" 
+                                    CornerRadius="5" >
+                            <ContentPresenter ContentSource="SelectedContent" />
+                        </Border>
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--стиль ListBox Catalog-->
+    <Style x:Key="{x:Type ListBox}" TargetType="ListBox">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <Border Name="Border" BorderThickness="1.5,0,1.5,1.5" CornerRadius="5" Background="WhiteSmoke" BorderBrush="DarkGray">
+                        <ScrollViewer Margin="0"  Focusable="false">
+                            <StackPanel Margin="2" IsItemsHost="True" />
+                        </ScrollViewer>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Items.Count}" Value="0">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,80,0,0" 
+                                           Text="Нет рецептов для отображения" TextAlignment="Center" FontSize="15"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--стиль ListBoxItem Catalog-->
+    <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Border" Padding="2" SnapsToDevicePixels="true" Background="WhiteSmoke" CornerRadius="5"
+                                BorderBrush="DarkGray" BorderThickness="1">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <Storyboard/>
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused">
+                                    <Storyboard/>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+                               ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+                               ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+                               HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                               VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+                               SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                <Condition Property="Selector.IsSelected" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Border" Value="LightGray"/>
+                            <Setter Property="Border.BorderBrush" TargetName="Border" Value="DarkGray"/>
+                            <Setter Property="BorderThickness" TargetName="Border" Value="2"/>
+                            <Setter Property="CornerRadius" TargetName="Border" Value="5"/>
+                        </MultiTrigger>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter Property="Panel.Background" TargetName="Border"  Value="#FFE2E2E2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--стиль GroupBox Search-->
+    <Style TargetType="GroupBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Grid Margin="4,0,4,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" BorderThickness="3" CornerRadius="5"
+                                BorderBrush="DarkGray" Background="WhiteSmoke">
+                            <ContentPresenter Margin="4,2" HorizontalAlignment="Center"
+                                                  ContentSource="Header"  RecognizesAccessKey="True" />
+                        </Border>
+                        <Border Grid.Row="1" BorderThickness="1.5,0,1.5,1.5" CornerRadius="5" BorderBrush="DarkGray"
+                                    Background="WhiteSmoke">
+                            <ContentPresenter Margin="4,2" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--стиль ListView SelectedRecipe Products-->
+    <Style x:Key="headerLVStyle" TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="Visibility" Value="Collapsed" />
+    </Style>
+
+    <!--стиль Title TextBlock Selected Recipe-->
+    <Style TargetType="TextBlock" x:Key="TitleText">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="Georgia"/>
+        <Setter Property="Margin" Value="0,20"/>
+    </Style>
+
+    <!--стиль Property TextBlock Selected Recipe-->
+    <Style TargetType="TextBlock" x:Key="PropertyText">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="Georgia"/>
+        <Setter Property="Margin" Value="0,3"/>
+    </Style>
+
+    <!--шаблон  Button-->
+    <ControlTemplate TargetType="Button" x:Key="btTemplate">
+        <Border CornerRadius="5" 
+                    Height="{TemplateBinding Height}"
+                    Width="{TemplateBinding Width}" 
+                    Background="LightGray" BorderThickness="3"                   
+                    BorderBrush="DarkGray" Margin="0,5,0,5">
+            <ContentControl FontSize="12" Foreground="Black" 
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}" />
+        </Border>
+        <ControlTemplate.Triggers >
+            <Trigger Property = "IsMouseOver" Value = "true" >
+                <Setter Property="Margin" Value="2,0,2,0" />
+            </Trigger >
+        </ControlTemplate.Triggers >
+    </ControlTemplate>
+
+    <!-- Menu Style -->
+    <Style x:Key="{x:Type Menu}" TargetType="{x:Type Menu}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Menu}">
+                    <Border BorderThickness="3" BorderBrush="DarkGray" Background="WhiteSmoke" CornerRadius="5">
+                        <StackPanel ClipToBounds="True" Orientation="Horizontal" IsItemsHost="True" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TopLevelHeader -->
+    <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border">
+            <Grid>
+                <ContentPresenter Margin="59,0" ContentSource="Header" HorizontalAlignment="Center"  RecognizesAccessKey="True" />
+                <Popup x:Name="Popup"  Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True"
+                           Focusable="False"    PopupAnimation="Fade">
+                    <Border x:Name="SubmenuBorder"  SnapsToDevicePixels="True"  BorderThickness="1.5"
+                                Background="WhiteSmoke" BorderBrush="DarkGray" CornerRadius="5">
+                        <ScrollViewer CanContentScroll="False"  VerticalScrollBarVisibility="Disabled">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsHighlighted" Value="true">
+                <Setter Property="Background" TargetName="Border" Value="#FFE2E2E2"/>
+                <Setter Property="BorderThickness" TargetName="Border" Value="0"/>
+                <Setter Property="CornerRadius" TargetName="Border" Value="5"/>
+            </Trigger>
+            <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
+                <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="5" />
+                <Setter TargetName="SubmenuBorder" Property="Padding"  Value="1" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- TopLevelItem -->
+    <ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}"   TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border">
+            <Grid>
+                <ContentPresenter Margin="59,0" ContentSource="Header"  RecognizesAccessKey="True" />
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" TargetName="Border" Value="#FFE2E2E2"/>
+                <Setter Property="BorderThickness" TargetName="Border" Value="0"/>
+                <Setter Property="CornerRadius" TargetName="Border" Value="5"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- SubmenuItem -->
+    <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Shortcut" />
+                    <ColumnDefinition Width="13" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                <Border x:Name="Check"  Width="13"   Height="13"   Visibility="Collapsed"   Margin="6,0,6,0" BorderThickness="1.5"
+                            BorderBrush ="DarkGray" Background="WhiteSmoke">
+                    <Path x:Name="CheckMark" Width="7" Height="7" Visibility="Hidden" SnapsToDevicePixels="False" StrokeThickness="2"
+                              Data="M 0 0 L 7 7 M 0 7 L 7 0">
+                        <Path.Stroke>
+                            <SolidColorBrush Color="DimGray" />
+                        </Path.Stroke>
+                    </Path>
+                </Border>
+                <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" />
+                <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,0,2" DockPanel.Dock="Right" />
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="true">
+                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsCheckable" Value="true">
+                <Setter TargetName="Check"  Property="Visibility"  Value="Visible" />
+                <Setter TargetName="Icon"   Property="Visibility"   Value="Hidden" />
+            </Trigger>
+            <Trigger Property="IsHighlighted"  Value="true">
+                <Setter Property="Background" TargetName="Border" Value="#FFE2E2E2"/>
+                <Setter Property="BorderThickness" TargetName="Border" Value="0"/>
+                <Setter Property="CornerRadius" TargetName="Border" Value="5"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}"
+                 TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border"  BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto"
+                          SharedSizeGroup="Shortcut" />
+                    <ColumnDefinition Width="13" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" />
+                <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,2,2"
+                               DockPanel.Dock="Right" />
+                <Path Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 0 7 L 4 3.5 Z">
+                    <Path.Fill>
+                        <SolidColorBrush Color="DimGray" />
+                    </Path.Fill>
+                </Path>
+                <Popup x:Name="Popup"  Placement="Right" HorizontalOffset="-4" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True"
+                           Focusable="False" PopupAnimation="Fade">
+                    <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" Background="WhiteSmoke" BorderThickness="2" BorderBrush="DarkGray">
+                        <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Disabled" >
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsHighlighted" Value="true">
+                <Setter Property="Background" TargetName="Border" Value="#FFE2E2E2"/>
+                <Setter Property="BorderThickness" TargetName="Border" Value="0"/>
+                <Setter Property="CornerRadius" TargetName="Border" Value="5"/>
+            </Trigger>
+            <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
+                <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="4" />
+                <Setter TargetName="SubmenuBorder" Property="Padding"  Value="0,3,0,3" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- MenuItem Style -->
+    <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="Role" Value="TopLevelHeader">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />
+                <Setter Property="Grid.IsSharedSizeScope" Value="true" />
+            </Trigger>
+            <Trigger Property="Role" Value="TopLevelItem">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
+            </Trigger>
+            <Trigger Property="Role" Value="SubmenuHeader">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuHeaderTemplateKey}}" />
+            </Trigger>
+            <Trigger Property="Role" Value="SubmenuItem">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuItemTemplateKey}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
