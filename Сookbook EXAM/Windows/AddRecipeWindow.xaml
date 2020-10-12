@@ -1,0 +1,208 @@
+﻿<Window x:Class="Сookbook_EXAM.AddRecipeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Сookbook_EXAM"
+        mc:Ignorable="d"
+        Title="                                                                                 Новый рецепт                                                                                " 
+        Height="632" Width="820" ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen" AllowsTransparency="True" 
+        WindowStyle="None" Background="Transparent" Loaded="Window_Loaded" Icon="Plate.png" >
+
+    <Window.CommandBindings>
+        <CommandBinding Command="local:CookBookCommands.Exit" Executed="Exit_Executed"/>
+    </Window.CommandBindings>
+
+    <Window.Template>
+        <ControlTemplate TargetType="Window">
+            <Border Name="newBorder" CornerRadius="5" Opacity="1" Background="White" BorderBrush="DarkGray" 
+                    BorderThickness="2" Padding="2,0">
+                <Grid>
+                    <TextBlock Text="{TemplateBinding Title}" FontWeight="Bold" HorizontalAlignment="Center"
+                    MouseLeftButtonDown="TextBlock_MouseLeftButtonDown"/>
+                    <Border Grid.Row="1">
+                        <AdornerDecorator>
+                            <ContentPresenter />
+                        </AdornerDecorator>
+                    </Border>
+                    <ResizeGrip Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                Visibility="Collapsed" IsTabStop="False" />
+                </Grid>                
+            </Border>
+        </ControlTemplate>
+    </Window.Template>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            
+            <!--Название, изображение, время-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.35*"/>
+                </Grid.ColumnDefinitions>
+                <GroupBox Grid.Column="0" Header="Название">
+                    <TextBox x:Name="recipeNameTBX" TextAlignment="Center" Margin="10,2" Height="20"/>
+                </GroupBox >
+                <GroupBox Grid.Column="1" Header="Изображение">
+                    <Grid Margin="10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.1*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" x:Name="imageRecipePathTB"  IsReadOnly="True" Margin="0,0,5,0" Height="20"/>
+                        <Button Grid.Column="1" x:Name="addRecipeImageBTN" Content="Добавить изображение" Click="addRecipeImageBTN_Click"
+                                Template="{StaticResource btTemplate}"/>
+                    </Grid>
+                </GroupBox >
+                <GroupBox Grid.Column="2" Header="Время">
+                    <xctk:TimePicker x:Name="cookTimeTP" Format="ShortTime" Margin="10,2" Height="20"/>
+                    <!--<xctk:DateTimePicker x:Name="cookTimeTP"/>-->
+                </GroupBox >
+            </Grid>
+
+            <!--Тип блюда, кухня-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" >
+                    <GroupBox  Header="Тип блюда">
+                        <StackPanel Margin="10,6">
+                            <RadioButton x:Name="oldTypeRB" Content="Выбрать:" Checked="typeRB_Checked" />
+                            <ComboBox x:Name="oldTypesCB" ItemsSource="{Binding AllTypes}" 
+                              ScrollViewer.CanContentScroll="True" DisplayMemberPath="Name" 
+                              SelectedValuePath="Name" SelectedValue="{Binding Path=DishType}" />
+                            <RadioButton x:Name="newTypeRB" Content="Добавить новый:" IsChecked="False" 
+                                         Checked="typeRB_Checked"/>
+                            <TextBox x:Name="newTypeTBX" IsEnabled="False" TextAlignment="Center"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Кухня">
+                        <StackPanel Margin="10,6">
+                            <RadioButton x:Name="oldCuisineRB" Content="Выбрать:" Checked="cuisineRB_Checked"/>
+                            <ComboBox x:Name="oldCuisinesCB" ItemsSource="{Binding AllCuisines}" 
+                              ScrollViewer.CanContentScroll="True" DisplayMemberPath="Name" 
+                              SelectedValuePath="Name" SelectedValue="{Binding Path=Cuisine}" />
+                            <RadioButton x:Name="newCuisineRB" Content="Добавить новую:" IsChecked="False"
+                                         Checked="cuisineRB_Checked"/>
+                            <TextBox x:Name="newCuisineTBX" IsEnabled="False"  TextAlignment="Center"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+                
+                <!--Продукты-->
+                <GroupBox Grid.Column="1" Header="Продукты">
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2.2*"/>
+                                <ColumnDefinition Width="0.6*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" >
+                                <TextBlock Text="Название" TextAlignment="Center" Margin="0,0,0,2"/>
+                                <ComboBox x:Name="nameProductCB" ItemsSource = "{Binding AllProducts}" ScrollViewer.CanContentScroll="True"
+                                                      DisplayMemberPath="Name" SelectedValuePath="Name" 
+                                                      SelectedValue="{Binding Path=FoodProduct}" IsEditable="True" 
+                                                      IsTextSearchEnabled="False" Width="285" HorizontalAlignment="Center"
+                                          Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Количество" TextAlignment="Center" Margin="0,0,0,2" />
+                                <xctk:DecimalUpDown x:Name="quantityProductDUD" TextAlignment="Center" Padding="0,2" Height="22"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Единица измерения" TextAlignment="Center" Margin="0,0,0,2"/>
+                                <ComboBox x:Name="unitCB" ItemsSource = "{Binding Units}" ScrollViewer.CanContentScroll="True"
+                                                      DisplayMemberPath="{Binding Path=Unit}" SelectedValuePath="Unit" 
+                                                      SelectedValue="{Binding Path=Unit}" Width="128" HorizontalAlignment="Center"
+                                          Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button x:Name="addProductBT" Content="Добавить продукт" Click="addProductBT_Click" 
+                             Template="{StaticResource btTemplate}"/>
+
+                        <DataGrid x:Name="selectedProductsDG" AutoGenerateColumns="False" ItemsSource="{Binding addRecipeProducts}"
+                              Height="80" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserAddRows="False"
+                              Background="WhiteSmoke" Margin="0,2" SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Название" Binding="{Binding Path=FoodProduct.Name}" IsReadOnly="True" Width="200"/>
+                                <DataGridTextColumn Header="Количество" Binding="{Binding Path=Quantity}"  IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Единица измерения" Binding="{Binding Path=ProductUnit}"  IsReadOnly="True"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button x:Name="removeProductBT" Content="Удалить продукт" Click="removeProductBT_Click"
+                             Template="{StaticResource btTemplate}"/>
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+
+            <!--Приготовление-->
+            <GroupBox Header="Приготовление ">
+                <StackPanel Margin="5,0">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="0.4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Column="0" Grid.Row="0" x:Name="imagePathTB"  IsReadOnly="True" Margin="0,0,5,0" Height="20"/>
+                        <Button Grid.Column="1" Grid.Row="0" x:Name="addStepImageBTN" Content="Добавить изображение" Click="addImageBTN_Click"
+                                Template="{StaticResource btTemplate}"/>
+                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <TextBlock Text="Описание:" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBox x:Name="stepDescriptionTBX"  Margin="0,2,5,5" Height="20"/>
+                        </StackPanel>
+                        <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" x:Name="addRecipeStepBTN" Content="Добавить шаг"  
+                                Template="{StaticResource btTemplate}" Click="addRecipeStep_Click"/>
+                    </Grid>
+
+                    <DataGrid x:Name="newStepsDG" AutoGenerateColumns="False" ItemsSource="{Binding addRecipeSteps}"
+                              Height="100" CanUserResizeRows="False" CanUserDeleteRows="False" CanUserAddRows="False"
+                              Background="WhiteSmoke" Margin="5" SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Изображение" Width="100" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Path=Photo}" Width="70" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Path=Description}"  IsReadOnly="True" Width="600"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="removeRecipeStepBT" Content="Удалить шаг" Click="removeRecipeStepBT_Click"
+                             Template="{StaticResource btTemplate}"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!--Добавить, закрыть-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="addNewRecipeBTN" Content="Добавить рецепт" Click="addNewRecipeBTN_Click" 
+                            Template="{StaticResource btTemplate}"/>
+                <Button Grid.Column="1" x:Name="closeBTN" Content="Закрыть" Command="local:CookBookCommands.Exit"
+                            Template="{StaticResource btTemplate}"/>
+            </Grid>
+            
+        </StackPanel>
+    </Grid>
+</Window>
